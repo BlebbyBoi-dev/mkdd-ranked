@@ -77,12 +77,14 @@
 <script>
   // --- Firebase Config ---
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
+    authDomain: "mkddranked.firebaseapp.com",
+    projectId: "mkddranked",
+    storageBucket: "mkddranked.firebasestorage.app",
+    messagingSenderId: "1077376017994",
+    appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
+    measurementId: "G-M7H7198T7X"
+
   };
 
   firebase.initializeApp(firebaseConfig);
@@ -123,7 +125,7 @@
     auth.createUserWithEmailAndPassword(email, password)
       .then(userCredential => {
         const user = userCredential.user;
-
+        window.location.href = "account-created.html";
         // Set Firebase displayName
         user.updateProfile({ displayName: username })
           .then(() => {
