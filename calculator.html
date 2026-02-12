@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MKDD TT → SRP Calculator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #f0f0f0; padding: 20px; }
+        h1 { color: #ffb400; }
+        label, input { display: block; margin: 10px 0; }
+        input[type="number"] { width: 100px; }
+        button { padding: 10px 20px; background: #ff4f00; border: none; color: white; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #ff7800; }
+        .result { margin-top: 20px; font-size: 1.2em; }
+        a { color: #ff4f00; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>MKDD Time Trial → SRP Calculator</h1>
+
+    <p>Enter your Time Trial times (in seconds) for each track and your SRP will be calculated.</p>
+
+    <label for="ttTime">Your TT Time (seconds)</label>
+    <input type="number" id="ttTime" placeholder="e.g. 150">
+
+    <label for="topTime">Benchmark / Top Ghost Time (seconds)</label>
+    <input type="number" id="topTime" placeholder="e.g. 120">
+
+    <button onclick="calculateSRP()">Calculate SRP</button>
+
+    <div class="result" id="result"></div>
+
+    <p><a href="index.html">⬅ Back to Homepage</a></p>
+
+    <script>
+        function calculateSRP() {
+            const tt = parseFloat(document.getElementById('ttTime').value);
+            const top = parseFloat(document.getElementById('topTime').value);
+            const basePoints = 1000;
+
+            if (isNaN(tt) || isNaN(top) || tt <= 0 || top <= 0) {
+                document.getElementById('result').innerHTML = "Please enter valid times.";
+                return;
+            }
+
+            // Basic SRP formula
+            let srp = basePoints * (top / tt);
+            srp = Math.round(srp);
+
+            // Determine Rank
+            let rank = '';
+            if (srp < 100) rank = 'Unranked';
+            else if (srp <= 599) rank = 'Circuit Racer';
+            else if (srp <= 1199) rank = 'Cup Contender';
+            else if (srp <= 2399) rank = 'Speedster';
+            else if (srp <= 3599) rank = 'Boost Pro';
+            else if (srp <= 4799) rank = 'Drift King';
+            else rank = 'Rainbow Master';
+
+            document.getElementById('result').innerHTML = `Your SRP: <strong>${srp}</strong><br>Rank: <strong>${rank}</strong>`;
+        }
+    </script>
+</body>
+</html>
