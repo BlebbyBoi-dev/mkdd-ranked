@@ -1,135 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="icon" href="favicon.png">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="icon" href="favicon.png">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #111;
+    color: #fff;
+  }
 
-    .card {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
+  header {
+    background: #ff4f00;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-    input, textarea, button {
-      padding: 8px;
-      margin-top: 5px;
-      margin-bottom: 10px;
-      width: 100%;
-      border-radius: 6px;
-      border: none;
-    }
+  header h1 {
+    margin: 0;
+  }
 
-    button {
-      background: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
+  header button {
+    background: teal;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: bold;
+  }
 
-    button:hover {
-      background: #45a049;
-    }
-  </style>
+  header button:hover {
+    background: #008080cc;
+  }
+
+  main {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 20px;
+  }
+
+  .left, .right {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .left {
+    flex: 2;
+  }
+
+  .right {
+    flex: 1;
+  }
+
+  .card {
+    margin-bottom: 20px;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: none;
+  }
+
+  button.action {
+    background: #4CAF50;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  button.action:hover {
+    background: #45a049;
+  }
+
+  img.pfp {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .message {
+    background: #333;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+  }
+
+</style>
 </head>
 <body>
 
-<h1>Your Dashboard</h1>
+<header>
+  <h1>MKDD Ranked Dashboard</h1>
+  <button onclick="showRunForm()">Submit a Run</button>
+</header>
 
-<div id="notLoggedIn" style="display:none;">
-  <p>You are not logged in.</p>
-</div>
+<main>
+  <div class="left">
 
-<div id="dashboardContent" style="display:none;">
+    <div class="card" id="profileCard">
+      <h2>Profile</h2>
+      <img id="pfp" class="pfp" src="default-pfp.png" alt="Profile Picture">
+      <label>Bio:</label>
+      <textarea id="bioInput" rows="3"></textarea>
+      <label>Status:</label>
+      <input type="text" id="statusInput">
+      <button class="action" onclick="saveProfile()">Save Profile</button>
+    </div>
 
-  <div class="card">
-    <h2>Profile Info</h2>
-    <p><strong>Username:</strong> <span id="usernameDisplay"></span></p>
+    <div class="card">
+      <h2>Message Board</h2>
+      <textarea id="messageInput" rows="2" placeholder="Write a message"></textarea>
+      <button class="action" onclick="postMessage()">Post</button>
+      <div id="messagesList"></div>
+    </div>
 
-    <label>Bio:</label>
-    <textarea id="bioInput" rows="4"></textarea>
-    <button onclick="saveBio()">Save Bio</button>
+    <div class="card" id="runFormCard" style="display:none;">
+      <h2>Submit a Run</h2>
+      <label>Track:</label>
+      <input type="text" id="trackName">
+      <label>Time (seconds):</label>
+      <input type="number" step="0.001" id="trackTime">
+      <button class="action" onclick="submitRun()">Submit Run</button>
+    </div>
+
   </div>
 
-  <div class="card">
-    <h2>Submit Track Time</h2>
-
-    <label>Track Name:</label>
-    <input type="text" id="trackName">
-
-    <label>Your Time (seconds):</label>
-    <input type="number" step="0.001" id="trackTime">
-
-    <button onclick="submitTime()">Submit Time</button>
+  <div class="right">
+    <div class="card">
+      <h2>Top Runs</h2>
+      <div id="topRuns"></div>
+    </div>
   </div>
-
-  <div class="card">
-    <h2>Your Submitted Times</h2>
-    <div id="timesList"></div>
-  </div>
-
-</div>
+</main>
 
 <script>
+  // LOGIN CHECK
   const currentUser = localStorage.getItem("loggedInUser");
-
   if (!currentUser) {
-    document.getElementById("notLoggedIn").style.display = "block";
-  } else {
-    document.getElementById("dashboardContent").style.display = "block";
-    document.getElementById("usernameDisplay").innerText = currentUser;
-    loadProfile();
+    alert("You must be logged in to view the dashboard!");
+    window.location.href = "signin.html";
   }
 
+  // LOAD PROFILE
   function loadProfile() {
     const userData = JSON.parse(localStorage.getItem(currentUser)) || {};
     document.getElementById("bioInput").value = userData.bio || "";
-    displayTimes(userData.times || []);
+    document.getElementById("statusInput").value = userData.status || "";
+    document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
+    displayTopRuns(userData.runs || []);
+    displayMessages(userData.messages || []);
   }
 
-  function saveBio() {
+  function saveProfile() {
     let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
     userData.bio = document.getElementById("bioInput").value;
+    userData.status = document.getElementById("statusInput").value;
+    // For now PFP upload is manual
     localStorage.setItem(currentUser, JSON.stringify(userData));
-    alert("Bio saved!");
+    alert("Profile saved!");
   }
 
-  function submitTime() {
-    const track = document.getElementById("trackName").value;
-    const time = parseFloat(document.getElementById("trackTime").value);
-
-    if (!track || !time) {
-      alert("Fill in both fields!");
-      return;
-    }
-
+  // MESSAGE BOARD
+  function postMessage() {
+    const msg = document.getElementById("messageInput").value.trim();
+    if (!msg) return;
     let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-    userData.times = userData.times || [];
-
-    userData.times.push({ track: track, time: time });
-
+    userData.messages = userData.messages || [];
+    userData.messages.push(msg);
     localStorage.setItem(currentUser, JSON.stringify(userData));
-
-    displayTimes(userData.times);
+    document.getElementById("messageInput").value = "";
+    displayMessages(userData.messages);
   }
 
-  function displayTimes(times) {
-    const list = document.getElementById("timesList");
+  function displayMessages(messages) {
+    const list = document.getElementById("messagesList");
     list.innerHTML = "";
-
-    times.forEach(t => {
+    messages.forEach(m => {
       const div = document.createElement("div");
-      div.innerText = `${t.track} - ${t.time}s`;
+      div.className = "message";
+      div.innerText = m;
       list.appendChild(div);
     });
   }
+
+  // RUN SUBMISSION
+  function showRunForm() {
+    document.getElementById("runFormCard").style.display = "block";
+  }
+
+  function submitRun() {
+    const track = document.getElementById("trackName").value;
+    const time = parseFloat(document.getElementById("trackTime").value);
+    if (!track || !time) { alert("Fill both fields!"); return; }
+    let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
+    userData.runs = userData.runs || [];
+    userData.runs.push({ track, time });
+    localStorage.setItem(currentUser, JSON.stringify(userData));
+    displayTopRuns(userData.runs);
+    alert("Run submitted!");
+  }
+
+  function displayTopRuns(runs) {
+    const panel = document.getElementById("topRuns");
+    panel.innerHTML = "";
+    if (!runs.length) return;
+    const sorted = runs.sort((a,b)=>a.time-b.time).slice(0,5);
+    sorted.forEach(r => {
+      const div = document.createElement("div");
+      div.innerText = `${r.track} - ${r.time}s`;
+      panel.appendChild(div);
+    });
+  }
+
+  loadProfile();
 </script>
 
 </body>
