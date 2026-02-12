@@ -56,15 +56,20 @@
             background: #111;
             color: #888;
         }
-        header {
-    background: #ff4f00;
-    padding: 20px;
-    font-size: 2em;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between; /* title left, button right */
-    align-items: center;
+        header a#authBtn {
+    background: teal;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.6em;
+    transition: background 0.2s;
 }
+
+header a#authBtn:hover {
+    background: #008080cc;
+}
+
 
 header span {
     /* ensures title stays on the left */
@@ -90,7 +95,8 @@ header button:hover {
 <body>
     <header>
   <span>MKDD Ranked TT Ladder</span>
-  <button id="authBtn">Sign Up / Sign In</button>
+  <a id="authBtn" href="signin.html">Sign Up / Sign In</a>
+
 </header>
 
     <main>
