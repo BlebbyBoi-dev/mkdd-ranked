@@ -56,10 +56,43 @@
             background: #111;
             color: #888;
         }
+        header {
+    background: #ff4f00;
+    padding: 20px;
+    font-size: 2em;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between; /* title left, button right */
+    align-items: center;
+}
+
+header span {
+    /* ensures title stays on the left */
+}
+
+header button {
+    background: teal;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.6em; /* smaller than header text */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+header button:hover {
+    background: #008080cc; /* slightly darker teal on hover */
+}
+
     </style>
 </head>
 <body>
-    <header>MKDD Ranked TT Ladder</header>
+    <header>
+  <span>MKDD Ranked TT Ladder</span>
+  <button id="authBtn">Sign Up / Sign In</button>
+</header>
+
     <main>
         <section>
             <h2>Welcome Racers!</h2>
