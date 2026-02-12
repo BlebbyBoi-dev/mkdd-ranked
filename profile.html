@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKDD Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: #f0f0f0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #ffb400;
+    }
+
+    #profileInfo {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #222;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #555;
+    }
+
+    th {
+      background: #ff4f00;
+    }
+
+    tr:nth-child(even) {
+      background: #333;
+    }
+
+    tr:hover {
+      background: #444;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: teal;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background: #008080cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Player Profile</h1>
+  <div id="profileInfo">
+    <h2 id="profileName">Loading...</h2>
+    <p>SRP: <span id="srpDisplay">0</span></p>
+    <button id="submitRunBtn" disabled>Submit Run</button>
+
+    <h2>Time Trial Runs</h2>
+    <table id="runsTable">
+      <thead>
+        <tr>
+          <th>Track</th>
+          <th>Time</th>
+          <th>SRP</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // --- Get UID from URL ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get('uid');
+
+    if (!uid) {
+      alert("No UID specified!");
+    } else {
+      // --- Load User Profile ---
+      db.collection('users').doc(uid).get()
+        .then(doc => {
+          if (!doc.exists) {
+            alert("User not found!");
+            return;
+          }
+          const data = doc.data();
+          document.getElementById('profileName').textContent = data.username;
+          document.getElementById('srpDisplay').textContent = data.srp;
+
+          // Enable submit run if current user matches profile
+          auth.onAuthStateChanged(user => {
+            if (user && user.uid === uid) {
+              document.getElementById('submitRunBtn').disabled = false;
+            }
+          });
+
+          // Populate runs table
+          const tbody = document.getElementById('runsTable').querySelector('tbody');
+          tbody.innerHTML = "";
+          data.runs.forEach(run => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${run.track}</td>
+              <td>${run.time}</td>
+              <td>${run.srp}</td>
+              <td>${new Date(run.timestamp).toLocaleDateString()}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        });
+    }
+
+    // --- Submit Run Example ---
+    document.getElementById('submitRunBtn').addEventListener('click', () => {
+      const track = prompt("Enter track name:");
+      const time = parseFloat(prompt("Enter your TT time:"));
+      const srp = Math.floor(Math.random() * 1000); // placeholder SRP calc
+
+      db.collection('users').doc(uid).update({
+        runs: firebase.firestore.FieldValue.arrayUnion({
+          track: track,
+          time: time,
+          srp: srp,
+          timestamp: Date.now()
+        }),
+        srp: srp // optional: update total SRP
+      }).then(() => {
+        alert("Run submitted!");
+        location.reload();
+      });
+    });
+  </script>
+</body>
+</html>
