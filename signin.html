@@ -1,31 +1,76 @@
-<!-- Login Form Example -->
+<!-- Login/Register Form -->
 <div id="loginDiv">
+  <h2>Sign Up / Sign In</h2>
+  <input type="text" id="username" placeholder="Username">
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <button onclick="register()">Register</button>
+  <div class="button-group">
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+  </div>
 </div>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1e1e1e;
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #loginDiv {
+    background: #222;
+    padding: 30px;
+    border-radius: 10px;
+    width: 320px;
+    box-shadow: 0 0 15px #000;
+    text-align: center;
+  }
+
+  #loginDiv h2 {
+    color: #ffb400;
+    margin-bottom: 20px;
+  }
+
+  #loginDiv input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background: #333;
+    color: #fff;
+    font-size: 1em;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  #loginDiv button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: teal;
+    color: #fff;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #loginDiv button:hover {
+    background: #008080cc;
+  }
+</style>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
   const firebaseConfig = { /* your Firebase config */ };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, password)
-      .then(user => alert('Logged in!'))
-      .catch(err => alert(err.message));
-  }
-
-  function register() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(user => alert('Account created!'))
-      .catch(err => alert(err.message));
-  }
-</script>
