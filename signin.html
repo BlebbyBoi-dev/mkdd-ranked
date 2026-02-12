@@ -125,7 +125,7 @@
     auth.createUserWithEmailAndPassword(email, password)
       .then(userCredential => {
         const user = userCredential.user;
-
+        window.location.href = "account-created.html";
         // Set Firebase displayName
         user.updateProfile({ displayName: username })
           .then(() => {
