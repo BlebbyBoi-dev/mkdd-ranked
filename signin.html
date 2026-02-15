@@ -92,23 +92,25 @@
   const db = firebase.firestore();
 
   // --- Login Function ---
-  function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
-    auth.signInWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        console.log("Logged in as:", user.displayName, user.uid);
+  auth.signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      console.log("Logged in as:", user.displayName, user.uid);
 
-        // Example: Enable "Submit Run" button if exists
-        const submitBtn = document.getElementById('submitRunBtn');
-        if (submitBtn) submitBtn.disabled = false;
+      // Enable "Submit Run" button if exists
+      const submitBtn = document.getElementById('submitRunBtn');
+      if (submitBtn) submitBtn.disabled = false;
 
-        // Redirect to profile page
-        window.location.href = `profile.html?uid=${user.uid}`;
-      })
-      .catch(err => alert(err.message));
+      // Redirect to account-created page
+      window.location.href = "account-created.html";
+    })
+    .catch(err => alert(err.message));
+}
+
   }
 
   // --- Register Function ---
