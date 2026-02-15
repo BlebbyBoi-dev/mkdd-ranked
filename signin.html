@@ -1,4 +1,71 @@
-<!-- Login/Register Form -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In / Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #loginDiv {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      width: 320px;
+      box-shadow: 0 0 15px #000;
+      text-align: center;
+    }
+
+    #loginDiv h2 {
+      color: #ffb400;
+      margin-bottom: 20px;
+    }
+
+    #loginDiv input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background: #333;
+      color: #fff;
+      font-size: 1em;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    #loginDiv button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: teal;
+      color: #fff;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #loginDiv button:hover {
+      background: #008080cc;
+    }
+  </style>
+</head>
+<body>
+
 <div id="loginDiv">
   <h2>Sign Up / Sign In</h2>
   <input type="text" id="username" placeholder="Username">
@@ -10,72 +77,13 @@
   </div>
 </div>
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #1e1e1e;
-    color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  #loginDiv {
-    background: #222;
-    padding: 30px;
-    border-radius: 10px;
-    width: 320px;
-    box-shadow: 0 0 15px #000;
-    text-align: center;
-  }
-
-  #loginDiv h2 {
-    color: #ffb400;
-    margin-bottom: 20px;
-  }
-
-  #loginDiv input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background: #333;
-    color: #fff;
-    font-size: 1em;
-  }
-
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  #loginDiv button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background: teal;
-    color: #fff;
-    font-size: 0.9em;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  #loginDiv button:hover {
-    background: #008080cc;
-  }
-</style>
-
+<!-- Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<!-- Your Custom JS -->
 <script>
-  // --- Firebase Config ---
   const firebaseConfig = {
     apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
     authDomain: "mkddranked.firebaseapp.com",
@@ -90,7 +98,7 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // --- Make login global ---
+  // Make login global
   window.login = function() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -99,11 +107,7 @@
       .then(userCredential => {
         const user = userCredential.user;
         console.log("Logged in as:", user.displayName, user.uid);
-
-        const submitBtn = document.getElementById('submitRunBtn');
-        if (submitBtn) submitBtn.disabled = false;
-
-        window.location.href = "account-created.html";
+        window.location.href = "account-created.html"; // Redirect after login
       })
       .catch(err => alert(err.message));
   }
@@ -121,7 +125,6 @@
     auth.createUserWithEmailAndPassword(email, password)
       .then(userCredential => {
         const user = userCredential.user;
-
         user.updateProfile({ displayName: username })
           .then(() => {
             db.collection('users').doc(user.uid).set({
@@ -131,7 +134,7 @@
               runs: []
             }).then(() => {
               alert("Account created! Profile initialized.");
-              window.location.href = "account-created.html";
+              window.location.href = "account-created.html"; // Redirect after register
             });
           })
           .catch(err => alert(err.message));
@@ -140,48 +143,5 @@
   }
 </script>
 
-  }
-
-  // --- Register Function ---
-  function register() {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (!username) {
-      alert("Please enter a username!");
-      return;
-    }
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        window.location.href = "account-created.html";
-        // Set Firebase displayName
-        user.updateProfile({ displayName: username })
-          .then(() => {
-            console.log("Username set:", username);
-
-            // Create user profile in Firestore
-            db.collection('users').doc(user.uid).set({
-              username: username,
-              email: email,
-              srp: 0,
-              runs: []
-            }).then(() => {
-              alert("Account created! Profile initialized.");
-              // Redirect to profile page
-              window.location.href = `profile.html?uid=${user.uid}`;
-            });
-          })
-          .catch(err => alert(err.message));
-      })
-      .catch(err => alert(err.message));
-  }
-
-  // --- Keep Submit Run Button Disabled Until Logged In ---
-  window.addEventListener('load', () => {
-    const submitBtn = document.getElementById('submitRunBtn');
-    if (submitBtn) submitBtn.disabled = true;
-  });
-</script>
+</body>
+</html>
