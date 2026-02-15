@@ -1,52 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>MKDD Ranked - Time Trial Ladder</title>
-        <meta name="description" content="Climb the ladder from Circuit Racer to Rainbow Master in Mario Kart: Double Dash!! with our ranked Time Trial system.">
-        <meta name="keywords" content="MKDD, Mario Kart Double Dash, Time Trial, Ranked, Leaderboard">
-        <meta name="author" content="BlebbyBoi">
-        <meta name="robots" content="index, follow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MKDD Ranked TT Ladder</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="Climb the ladder from Circuit Racer to Rainbow Master in Mario Kart: Double Dash!! with our ranked Time Trial system.">
+    <meta name="keywords" content="MKDD, Mario Kart Double Dash, Time Trial, Ranked, Leaderboard">
+    <meta name="author" content="BlebbyBoi">
+    <meta name="robots" content="index, follow">
+
     <link rel="icon" type="image/png" href="favicon.png">
+
     <style>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
-    authDomain: "mkddranked.firebaseapp.com",
-    projectId: "mkddranked",
-    storageBucket: "mkddranked.firebasestorage.app",
-    messagingSenderId: "1077376017994",
-    appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
-    measurementId: "G-M7H7198T7X"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-
-  // Check if user is logged in
-  const authBtn = document.getElementById("authBtn");
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      // User is signed in, update button to Dashboard
-      authBtn.textContent = "Dashboard";
-      authBtn.href = "dashboard.html";
-    } else {
-      // User not signed in, keep button as Sign Up / Sign In
-      authBtn.textContent = "Sign Up / Sign In";
-      authBtn.href = "signin.html";
-    }
-  });
-</script>
-
         body {
             font-family: Arial, sans-serif;
             background: #1e1e1e;
@@ -57,27 +22,51 @@
         header {
             background: #ff4f00;
             padding: 20px;
-            text-align: center;
-            font-size: 2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header span {
+            font-size: 1.5em;
             font-weight: bold;
+        }
+        header a#authBtn {
+            background: teal;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8em;
+            transition: background 0.2s;
+        }
+        header a#authBtn:hover {
+            background: #008080cc;
         }
         main {
             padding: 20px;
             max-width: 900px;
             margin: auto;
         }
-        section {
-            margin-bottom: 40px;
-        }
         h2 {
             color: #ffb400;
         }
-        ul {
-            list-style: none;
-            padding-left: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #222;
+            color: #fff;
+            margin-bottom: 40px;
         }
-        li {
-            padding: 5px 0;
+        th, td {
+            padding: 10px;
+            border: 1px solid #555;
+            text-align: center;
+        }
+        th {
+            background: #ff4f00;
+        }
+        tr:nth-child(even) {
+            background: #333;
         }
         a.button {
             display: inline-block;
@@ -97,121 +86,59 @@
             background: #111;
             color: #888;
         }
-        header a#authBtn {
-    background: teal;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 0.6em;
-    transition: background 0.2s;
-}
-
-header a#authBtn:hover {
-    background: #008080cc;
-}
-
-
-header span {
-    /* ensures title stays on the left */
-}
-
-header button {
-    background: teal;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 0.6em; /* smaller than header text */
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-header button:hover {
-    background: #008080cc; /* slightly darker teal on hover */
-}
-
     </style>
 </head>
 <body>
     <header>
-  <span>MKDD Ranked TT Ladder</span>
-  <a id="authBtn" href="signin.html">Sign Up / Sign In</a>
-
-</header>
+        <span>MKDD Ranked TT Ladder</span>
+        <a id="authBtn" href="signin.html">Sign Up / Sign In</a>
+    </header>
 
     <main>
         <section>
             <h2>Welcome Racers!</h2>
-            <p>Climb the ladder from <strong>Circuit Racer</strong> all the way to <strong>Rainbow Master</strong> by submitting your Time Trial times. Your SRP (Skill Rating Points) determines your rank.</p>
+            <p>Climb the ladder from <strong>Circuit Racer</strong> to <strong>Rainbow Master</strong> by submitting your Time Trial times. Your SRP (Skill Rating Points) determines your rank.</p>
         </section>
 
-<table>
-    <thead>
-        <tr>
-            <th>Tier</th>
-            <th>Sub-Rank</th>
-            <th>SRP Range</th>
-        </tr>
-    </thead>
-    <tbody>
-        <style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #222;
-        color: #fff;
-    }
-    th, td {
-        padding: 10px;
-        border: 1px solid #555;
-        text-align: center;
-    }
-    th {
-        background: #ff4f00;
-    }
-    tr:nth-child(even) {
-        background: #333;
-    }
-</style>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tier</th>
+                    <th>Sub-Rank</th>
+                    <th>SRP Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td rowspan="3">Circuit Racer</td><td>1</td><td>100 – 266</td></tr>
+                <tr><td>2</td><td>267 – 433</td></tr>
+                <tr><td>3</td><td>434 – 599</td></tr>
 
-        <!-- Circuit Racer -->
-        <tr><td rowspan="3">Circuit Racer</td><td>1</td><td>100 – 266</td></tr>
-        <tr><td>2</td><td>267 – 433</td></tr>
-        <tr><td>3</td><td>434 – 599</td></tr>
+                <tr><td rowspan="3">Cup Contender</td><td>1</td><td>600 – 799</td></tr>
+                <tr><td>2</td><td>800 – 999</td></tr>
+                <tr><td>3</td><td>1000 – 1199</td></tr>
 
-        <!-- Cup Contender -->
-        <tr><td rowspan="3">Cup Contender</td><td>1</td><td>600 – 799</td></tr>
-        <tr><td>2</td><td>800 – 999</td></tr>
-        <tr><td>3</td><td>1000 – 1199</td></tr>
+                <tr><td rowspan="4">Speedster</td><td>1</td><td>1200 – 1499</td></tr>
+                <tr><td>2</td><td>1500 – 1799</td></tr>
+                <tr><td>3</td><td>1800 – 2099</td></tr>
+                <tr><td>4</td><td>2100 – 2399</td></tr>
 
-        <!-- Speedster -->
-        <tr><td rowspan="4">Speedster</td><td>1</td><td>1200 – 1499</td></tr>
-        <tr><td>2</td><td>1500 – 1799</td></tr>
-        <tr><td>3</td><td>1800 – 2099</td></tr>
-        <tr><td>4</td><td>2100 – 2399</td></tr>
+                <tr><td rowspan="4">Boost Pro</td><td>1</td><td>2400 – 2699</td></tr>
+                <tr><td>2</td><td>2700 – 2999</td></tr>
+                <tr><td>3</td><td>3000 – 3299</td></tr>
+                <tr><td>4</td><td>3300 – 3599</td></tr>
 
-        <!-- Boost Pro -->
-        <tr><td rowspan="4">Boost Pro</td><td>1</td><td>2400 – 2699</td></tr>
-        <tr><td>2</td><td>2700 – 2999</td></tr>
-        <tr><td>3</td><td>3000 – 3299</td></tr>
-        <tr><td>4</td><td>3300 – 3599</td></tr>
+                <tr><td rowspan="4">Drift King</td><td>1</td><td>3600 – 3899</td></tr>
+                <tr><td>2</td><td>3900 – 4199</td></tr>
+                <tr><td>3</td><td>4200 – 4499</td></tr>
+                <tr><td>4</td><td>4500 – 4799</td></tr>
 
-        <!-- Drift King -->
-        <tr><td rowspan="4">Drift King</td><td>1</td><td>3600 – 3899</td></tr>
-        <tr><td>2</td><td>3900 – 4199</td></tr>
-        <tr><td>3</td><td>4200 – 4499</td></tr>
-        <tr><td>4</td><td>4500 – 4799</td></tr>
-
-        <!-- Rainbow Master -->
-        <tr><td rowspan="5">Rainbow Master</td><td>1</td><td>4800 – 5840</td></tr>
-        <tr><td>2</td><td>5841 – 6880</td></tr>
-        <tr><td>3</td><td>6881 – 7920</td></tr>
-        <tr><td>4</td><td>7921 – 8960</td></tr>
-        <tr><td>5</td><td>8961 – 10000</td></tr>
-    </tbody>
-</table>
-
+                <tr><td rowspan="5">Rainbow Master</td><td>1</td><td>4800 – 5840</td></tr>
+                <tr><td>2</td><td>5841 – 6880</td></tr>
+                <tr><td>3</td><td>6881 – 7920</td></tr>
+                <tr><td>4</td><td>7921 – 8960</td></tr>
+                <tr><td>5</td><td>8961 – 10000</td></tr>
+            </tbody>
+        </table>
 
         <section>
             <h2>Calculate Your SRP</h2>
@@ -225,31 +152,42 @@ header button:hover {
             <a class="button" href="tracks.html">View Leaderboards</a>
         </section>
     </main>
+
     <footer>
         Made with ❤️ for MKDD fans. Free hosted on GitHub Pages.
     </footer>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
-    authDomain: "mkddranked.firebaseapp.com",
-    projectId: "mkddranked",
-    storageBucket: "mkddranked.firebasestorage.app",
-    messagingSenderId: "1077376017994",
-    appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
-    measurementId: "G-M7H7198T7X"
-  };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
+            authDomain: "mkddranked.firebaseapp.com",
+            projectId: "mkddranked",
+            storageBucket: "mkddranked.firebasestorage.app",
+            messagingSenderId: "1077376017994",
+            appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
+            measurementId: "G-M7H7198T7X"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+
+        const authBtn = document.getElementById("authBtn");
+
+        // Update button based on login state
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                authBtn.textContent = "Dashboard";
+                authBtn.href = "dashboard.html";
+            } else {
+                authBtn.textContent = "Sign Up / Sign In";
+                authBtn.href = "signin.html";
+            }
+        });
+    </script>
 </body>
 </html>
