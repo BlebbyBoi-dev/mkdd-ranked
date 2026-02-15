@@ -3,223 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
-<script>
-  src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
-  src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"
-  src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"
+<title>MKDD Ranked Dashboard</title>
 
-  // Initialize Firebase
-  const firebaseConfig = { /* your config */ };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  const dashboardContent = document.getElementById('dashboardContent');
-
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      // User is logged in
-      console.log("Logged in as:", user.email);
-
-      // Use their UID or email as key for localStorage profile
-      const currentUser = user.uid; // OR user.email if you prefer
-      dashboardContent.style.display = 'block';
-
-      // LOAD PROFILE AND OTHER FUNCTIONS
-      loadProfile(currentUser);
-
-      // Attach currentUser to global so other functions can access
-      window.currentUser = currentUser;
-
-    } else {
-      // Not logged in
-      alert("You must be logged in to view the dashboard!");
-      window.location.href = 'signin.html';
-    }
-  });
-
-  // Updated loadProfile
-  function loadProfile(userId) {
-    let userData = JSON.parse(localStorage.getItem(userId)) || {};
-    document.getElementById("bioInput").value = userData.bio || "";
-    document.getElementById("statusInput").value = userData.status || "";
-    document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
-    displayTopRuns(userData.runs || []);
-    displayMessages(userData.messages || []);
-  }
-
-  function saveProfile() {
-    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
-    userData.bio = document.getElementById("bioInput").value;
-    userData.status = document.getElementById("statusInput").value;
-    localStorage.setItem(window.currentUser, JSON.stringify(userData));
-    alert("Profile saved!");
-  }
-
-  function postMessage() {
-    const msg = document.getElementById("messageInput").value.trim();
-    if (!msg) return;
-    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
-    userData.messages = userData.messages || [];
-    userData.messages.push(msg);
-    localStorage.setItem(window.currentUser, JSON.stringify(userData));
-    document.getElementById("messageInput").value = "";
-    displayMessages(userData.messages);
-  }
-
-  function submitRun() {
-    const track = document.getElementById("trackName").value;
-    const time = parseFloat(document.getElementById("trackTime").value);
-    if (!track || !time) { alert("Fill both fields!"); return; }
-    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
-    userData.runs = userData.runs || [];
-    userData.runs.push({ track, time });
-    localStorage.setItem(window.currentUser, JSON.stringify(userData));
-    displayTopRuns(userData.runs);
-    alert("Run submitted!");
-  }
-
-  // Update loadProfile
-function loadProfile(userId = currentUser) {
-  let userData = JSON.parse(localStorage.getItem(userId)) || {};
-  document.getElementById("usernameInput").value = userData.username || "";
-  document.getElementById("bioInput").value = userData.bio || "";
-  document.getElementById("statusInput").value = userData.status || "";
-  document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
-  displayTopRuns(userData.runs || []);
-  displayMessages(userData.messages || []);
-}
-
-// Save profile including username and PFP
-function saveProfile() {
-  let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-
-  // Username
-  const newUsername = document.getElementById("usernameInput").value.trim();
-  if (newUsername) userData.username = newUsername;
-
-  // Bio & status
-  userData.bio = document.getElementById("bioInput").value;
-  userData.status = document.getElementById("statusInput").value;
-
-  // PFP
-  const fileInput = document.getElementById("pfpInput");
-  if (fileInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      userData.pfp = e.target.result; // save as Data URL
-      localStorage.setItem(currentUser, JSON.stringify(userData));
-      document.getElementById("pfp").src = userData.pfp;
-      alert("Profile saved!");
-    }
-    reader.readAsDataURL(fileInput.files[0]);
-  } else {
-    localStorage.setItem(currentUser, JSON.stringify(userData));
-    alert("Profile saved!");
-  }
-}
-
-</script>
-
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <link rel="icon" href="favicon.png">
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #111;
-    color: #fff;
-  }
-
-  header {
-    background: #ff4f00;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  header h1 {
-    margin: 0;
-  }
-
-  header button {
-    background: teal;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  header button:hover {
-    background: #008080cc;
-  }
-
-  main {
-    display: flex;
-    max-width: 1200px;
-    margin: 20px auto;
-    gap: 20px;
-  }
-
-  .left, .right {
-    background: #222;
-    padding: 20px;
-    border-radius: 10px;
-  }
-
-  .left {
-    flex: 2;
-  }
-
-  .right {
-    flex: 1;
-  }
-
-  .card {
-    margin-bottom: 20px;
-  }
-
-  input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: none;
-  }
-
-  button.action {
-    background: #4CAF50;
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    color: #fff;
-  }
-
-  button.action:hover {
-    background: #45a049;
-  }
-
-  img.pfp {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  .message {
-    background: #333;
-    padding: 8px;
-    border-radius: 6px;
-    margin-bottom: 5px;
-  }
-
+  body { font-family: Arial, sans-serif; margin:0; background:#111; color:#fff; }
+  header { background:#ff4f00; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { margin:0; }
+  header button { background:teal; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; color:#fff; font-weight:bold; }
+  header button:hover { background:#008080cc; }
+  main { display:flex; max-width:1200px; margin:20px auto; gap:20px; }
+  .left, .right { background:#222; padding:20px; border-radius:10px; }
+  .left { flex:2; } .right { flex:1; }
+  .card { margin-bottom:20px; }
+  input, textarea { width:100%; padding:8px; margin:5px 0 10px; border-radius:6px; border:none; }
+  button.action { background:#4CAF50; padding:10px; border-radius:6px; border:none; cursor:pointer; font-weight:bold; color:#fff; }
+  button.action:hover { background:#45a049; }
+  img.pfp { width:100px; height:100px; border-radius:50%; display:block; margin-bottom:10px; }
+  .message { background:#333; padding:8px; border-radius:6px; margin-bottom:5px; }
 </style>
 </head>
 <body>
@@ -232,25 +38,21 @@ function saveProfile() {
 <main>
   <div class="left">
 
+    <!-- Profile Card -->
     <div class="card" id="profileCard">
-    <h2>Profile</h2>
+      <h2>Profile</h2>
+      <img id="pfp" class="pfp" src="default-pfp.png" alt="Profile Picture">
+      <input type="file" id="pfpInput" accept="image/*">
+      <label>Username:</label>
+      <input type="text" id="usernameInput" placeholder="Your username">
+      <label>Bio:</label>
+      <textarea id="bioInput" rows="3"></textarea>
+      <label>Status:</label>
+      <input type="text" id="statusInput">
+      <button class="action" onclick="saveProfile()">Save Profile</button>
+    </div>
 
-    <!-- PFP -->
-    <img id="pfp" class="pfp" src="default-pfp.png" alt="Profile Picture">
-    <input type="file" id="pfpInput" accept="image/*">
-
-    <!-- Username -->
-    <label>Username:</label>
-    <input type="text" id="usernameInput" placeholder="Your username">
-
-    <label>Bio:</label>
-    <textarea id="bioInput" rows="3"></textarea>
-    <label>Status:</label>
-    <input type="text" id="statusInput">
-    <button class="action" onclick="saveProfile()">Save Profile</button>
-  </div>
-
-
+    <!-- Message Board -->
     <div class="card">
       <h2>Message Board</h2>
       <textarea id="messageInput" rows="2" placeholder="Write a message"></textarea>
@@ -258,6 +60,7 @@ function saveProfile() {
       <div id="messagesList"></div>
     </div>
 
+    <!-- Submit Run -->
     <div class="card" id="runFormCard" style="display:none;">
       <h2>Submit a Run</h2>
       <label>Track:</label>
@@ -278,85 +81,140 @@ function saveProfile() {
 </main>
 
 <script>
-  // LOGIN CHECK
-  const currentUser = localStorage.getItem("loggedInUser");
-  if (!currentUser) {
-    alert("You must be logged in to view the dashboard!");
-    window.location.href = "signin.html";
-  }
+  // ---------------- Firebase Initialization ----------------
+  const firebaseConfig = {
+    apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
+    authDomain: "mkddranked.firebaseapp.com",
+    projectId: "mkddranked",
+    storageBucket: "mkddranked.firebasestorage.app",
+    messagingSenderId: "1077376017994",
+    appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
+    measurementId: "G-M7H7198T7X"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  // LOAD PROFILE
+  // ---------------- Auth Check ----------------
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      alert("You must be logged in to view the dashboard!");
+      window.location.href = "signin.html";
+      return;
+    }
+    loadProfile();
+  });
+
+  // ---------------- Profile ----------------
   function loadProfile() {
-    const userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-    document.getElementById("bioInput").value = userData.bio || "";
-    document.getElementById("statusInput").value = userData.status || "";
-    document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
-    displayTopRuns(userData.runs || []);
-    displayMessages(userData.messages || []);
-  }
+    const userRef = db.collection("users").doc(auth.currentUser.uid);
+    userRef.get().then(doc => {
+      if (!doc.exists) return;
+      const data = doc.data();
+      document.getElementById("usernameInput").value = data.username || "";
+      document.getElementById("bioInput").value = data.bio || "";
+      document.getElementById("statusInput").value = data.status || "";
+      document.getElementById("pfp").src = data.pfp || "default-pfp.png";
 
-  function saveProfile() {
-    let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-    userData.bio = document.getElementById("bioInput").value;
-    userData.status = document.getElementById("statusInput").value;
-    // For now PFP upload is manual
-    localStorage.setItem(currentUser, JSON.stringify(userData));
-    alert("Profile saved!");
-  }
+      // Load approved runs
+      userRef.collection("runs").where("status","==","approved").get().then(snapshot => {
+        const runs = [];
+        snapshot.forEach(r => runs.push(r.data()));
+        displayTopRuns(runs);
+      });
 
-  // MESSAGE BOARD
-  function postMessage() {
-    const msg = document.getElementById("messageInput").value.trim();
-    if (!msg) return;
-    let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-    userData.messages = userData.messages || [];
-    userData.messages.push(msg);
-    localStorage.setItem(currentUser, JSON.stringify(userData));
-    document.getElementById("messageInput").value = "";
-    displayMessages(userData.messages);
-  }
-
-  function displayMessages(messages) {
-    const list = document.getElementById("messagesList");
-    list.innerHTML = "";
-    messages.forEach(m => {
-      const div = document.createElement("div");
-      div.className = "message";
-      div.innerText = m;
-      list.appendChild(div);
+      // Load messages if you want (optional)
+      // messagesList logic can also fetch from Firestore collection
     });
   }
 
-  // RUN SUBMISSION
-  function showRunForm() {
-    document.getElementById("runFormCard").style.display = "block";
+  function saveProfile() {
+    const userRef = db.collection("users").doc(auth.currentUser.uid);
+    const newUsername = document.getElementById("usernameInput").value.trim();
+    const bio = document.getElementById("bioInput").value;
+    const status = document.getElementById("statusInput").value;
+    const fileInput = document.getElementById("pfpInput");
+
+    if (fileInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        userRef.set({
+          username: newUsername,
+          bio,
+          status,
+          pfp: e.target.result
+        }, { merge:true }).then(() => alert("Profile saved!"));
+      }
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      userRef.set({ username:newUsername, bio, status }, { merge:true }).then(() => alert("Profile saved!"));
+    }
   }
 
+  // ---------------- Message Board ----------------
+  function postMessage() {
+    const msg = document.getElementById("messageInput").value.trim();
+    if (!msg) return;
+    const userRef = db.collection("users").doc(auth.currentUser.uid);
+    userRef.collection("messages").add({
+      message: msg,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      document.getElementById("messageInput").value = "";
+      loadMessages(); // optional reload
+    });
+  }
+
+  function loadMessages() {
+    const list = document.getElementById("messagesList");
+    list.innerHTML = "";
+    const userRef = db.collection("users").doc(auth.currentUser.uid);
+    userRef.collection("messages").orderBy("createdAt").get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerText = doc.data().message;
+        list.appendChild(div);
+      });
+    });
+  }
+
+  // ---------------- Runs ----------------
+  function showRunForm() { document.getElementById("runFormCard").style.display = "block"; }
+
   function submitRun() {
-    const track = document.getElementById("trackName").value;
+    const track = document.getElementById("trackName").value.trim();
     const time = parseFloat(document.getElementById("trackTime").value);
     if (!track || !time) { alert("Fill both fields!"); return; }
-    let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
-    userData.runs = userData.runs || [];
-    userData.runs.push({ track, time });
-    localStorage.setItem(currentUser, JSON.stringify(userData));
-    displayTopRuns(userData.runs);
-    alert("Run submitted!");
+
+    const srp = Math.max(0, 100 - (time - 60)); // simple SRP formula
+
+    db.collection("users").doc(auth.currentUser.uid)
+      .collection("runs").add({
+        track,
+        time,
+        srp,
+        status:"pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert("Run submitted! Waiting for moderator approval.");
+        document.getElementById("trackName").value = "";
+        document.getElementById("trackTime").value = "";
+      });
   }
 
   function displayTopRuns(runs) {
     const panel = document.getElementById("topRuns");
     panel.innerHTML = "";
     if (!runs.length) return;
-    const sorted = runs.sort((a,b)=>a.time-b.time).slice(0,5);
+    const sorted = runs.sort((a,b) => b.srp - a.srp).slice(0,5); // top 5 by SRP
     sorted.forEach(r => {
       const div = document.createElement("div");
-      div.innerText = `${r.track} - ${r.time}s`;
+      div.innerText = `${r.track} - ${r.time}s (SRP: ${r.srp})`;
       panel.appendChild(div);
     });
   }
-
-  loadProfile();
 </script>
 
 </body>
