@@ -53,4 +53,5 @@ Feel free to use it for personal enjoyment, learning, or sharing with friends.
 ## 🔗 Related Links
 
 - [Mario Kart: Double Dash!! Players Page (ARR)](https://www.mariokart64.com/mkdd/standardc.php)  
-- [Google Fire]()
+- [Google Firebase](https://firebase.google.com/)  
+- [GitHub Pages](https://pages.github.com/)  
