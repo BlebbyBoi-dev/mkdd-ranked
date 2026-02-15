@@ -74,6 +74,47 @@
     displayTopRuns(userData.runs);
     alert("Run submitted!");
   }
+
+  // Update loadProfile
+function loadProfile(userId = currentUser) {
+  let userData = JSON.parse(localStorage.getItem(userId)) || {};
+  document.getElementById("usernameInput").value = userData.username || "";
+  document.getElementById("bioInput").value = userData.bio || "";
+  document.getElementById("statusInput").value = userData.status || "";
+  document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
+  displayTopRuns(userData.runs || []);
+  displayMessages(userData.messages || []);
+}
+
+// Save profile including username and PFP
+function saveProfile() {
+  let userData = JSON.parse(localStorage.getItem(currentUser)) || {};
+
+  // Username
+  const newUsername = document.getElementById("usernameInput").value.trim();
+  if (newUsername) userData.username = newUsername;
+
+  // Bio & status
+  userData.bio = document.getElementById("bioInput").value;
+  userData.status = document.getElementById("statusInput").value;
+
+  // PFP
+  const fileInput = document.getElementById("pfpInput");
+  if (fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      userData.pfp = e.target.result; // save as Data URL
+      localStorage.setItem(currentUser, JSON.stringify(userData));
+      document.getElementById("pfp").src = userData.pfp;
+      alert("Profile saved!");
+    }
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    localStorage.setItem(currentUser, JSON.stringify(userData));
+    alert("Profile saved!");
+  }
+}
+
 </script>
 
 
