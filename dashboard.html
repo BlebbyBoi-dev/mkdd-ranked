@@ -188,14 +188,23 @@
   <div class="left">
 
     <div class="card" id="profileCard">
-      <h2>Profile</h2>
-      <img id="pfp" class="pfp" src="default-pfp.png" alt="Profile Picture">
-      <label>Bio:</label>
-      <textarea id="bioInput" rows="3"></textarea>
-      <label>Status:</label>
-      <input type="text" id="statusInput">
-      <button class="action" onclick="saveProfile()">Save Profile</button>
-    </div>
+    <h2>Profile</h2>
+
+    <!-- PFP -->
+    <img id="pfp" class="pfp" src="default-pfp.png" alt="Profile Picture">
+    <input type="file" id="pfpInput" accept="image/*">
+
+    <!-- Username -->
+    <label>Username:</label>
+    <input type="text" id="usernameInput" placeholder="Your username">
+
+    <label>Bio:</label>
+    <textarea id="bioInput" rows="3"></textarea>
+    <label>Status:</label>
+    <input type="text" id="statusInput">
+    <button class="action" onclick="saveProfile()">Save Profile</button>
+  </div>
+
 
     <div class="card">
       <h2>Message Board</h2>
