@@ -12,6 +12,41 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCaAYUX66q8xfXjNl1oNsXc4VTULaAekjo",
+    authDomain: "mkddranked.firebaseapp.com",
+    projectId: "mkddranked",
+    storageBucket: "mkddranked.firebasestorage.app",
+    messagingSenderId: "1077376017994",
+    appId: "1:1077376017994:web:efb82652bfd4cbb90f68b3",
+    measurementId: "G-M7H7198T7X"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  // Check if user is logged in
+  const authBtn = document.getElementById("authBtn");
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      // User is signed in, update button to Dashboard
+      authBtn.textContent = "Dashboard";
+      authBtn.href = "dashboard.html";
+    } else {
+      // User not signed in, keep button as Sign Up / Sign In
+      authBtn.textContent = "Sign Up / Sign In";
+      authBtn.href = "signin.html";
+    }
+  });
+</script>
+
         body {
             font-family: Arial, sans-serif;
             background: #1e1e1e;
