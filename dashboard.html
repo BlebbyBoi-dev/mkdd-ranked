@@ -4,26 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-  // Firebase config
-  const firebaseConfig = { /* your Firebase config */ };
+  // Initialize Firebase
+  const firebaseConfig = { /* your config */ };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // Check if user is logged in
+  const dashboardContent = document.getElementById('dashboardContent');
+
   auth.onAuthStateChanged(user => {
     if (user) {
-      // User is signed in, you can show the dashboard content
+      // User is logged in
       console.log("Logged in as:", user.email);
-      document.getElementById('dashboardContent').style.display = 'block';
+
+      // Use their UID or email as key for localStorage profile
+      const currentUser = user.uid; // OR user.email if you prefer
+      dashboardContent.style.display = 'block';
+
+      // LOAD PROFILE AND OTHER FUNCTIONS
+      loadProfile(currentUser);
+
+      // Attach currentUser to global so other functions can access
+      window.currentUser = currentUser;
+
     } else {
-      // User not signed in, redirect to login
+      // Not logged in
+      alert("You must be logged in to view the dashboard!");
       window.location.href = 'signin.html';
     }
   });
+
+  // Updated loadProfile
+  function loadProfile(userId) {
+    let userData = JSON.parse(localStorage.getItem(userId)) || {};
+    document.getElementById("bioInput").value = userData.bio || "";
+    document.getElementById("statusInput").value = userData.status || "";
+    document.getElementById("pfp").src = userData.pfp || "default-pfp.png";
+    displayTopRuns(userData.runs || []);
+    displayMessages(userData.messages || []);
+  }
+
+  function saveProfile() {
+    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
+    userData.bio = document.getElementById("bioInput").value;
+    userData.status = document.getElementById("statusInput").value;
+    localStorage.setItem(window.currentUser, JSON.stringify(userData));
+    alert("Profile saved!");
+  }
+
+  function postMessage() {
+    const msg = document.getElementById("messageInput").value.trim();
+    if (!msg) return;
+    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
+    userData.messages = userData.messages || [];
+    userData.messages.push(msg);
+    localStorage.setItem(window.currentUser, JSON.stringify(userData));
+    document.getElementById("messageInput").value = "";
+    displayMessages(userData.messages);
+  }
+
+  function submitRun() {
+    const track = document.getElementById("trackName").value;
+    const time = parseFloat(document.getElementById("trackTime").value);
+    if (!track || !time) { alert("Fill both fields!"); return; }
+    let userData = JSON.parse(localStorage.getItem(window.currentUser)) || {};
+    userData.runs = userData.runs || [];
+    userData.runs.push({ track, time });
+    localStorage.setItem(window.currentUser, JSON.stringify(userData));
+    displayTopRuns(userData.runs);
+    alert("Run submitted!");
+  }
 </script>
+
 
 <link rel="icon" href="favicon.png">
 <style>
