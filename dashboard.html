@@ -4,6 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+  // Firebase config
+  const firebaseConfig = { /* your Firebase config */ };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Check if user is logged in
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      // User is signed in, you can show the dashboard content
+      console.log("Logged in as:", user.email);
+      document.getElementById('dashboardContent').style.display = 'block';
+    } else {
+      // User not signed in, redirect to login
+      window.location.href = 'signin.html';
+    }
+  });
+</script>
+
 <link rel="icon" href="favicon.png">
 <style>
   body {
